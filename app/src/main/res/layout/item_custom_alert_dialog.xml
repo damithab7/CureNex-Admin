@@ -1,0 +1,52 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_marginHorizontal="30dp"
+    android:layout_gravity="center"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_round"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    android:paddingVertical="15dp">
+
+    <TextView
+        android:id="@+id/alert_dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins"
+        android:textStyle="bold"
+        android:text="Dialog Title"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/alert_dialog_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:fontFamily="@font/poppins"
+        android:text="Your message goes here."
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:fontFamily="@font/poppins"
+            android:id="@+id/alert_dialog_negative_btn"
+            style="@style/Widget.Material3.Button.TextButton.Dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel" />
+
+        <com.google.android.material.button.MaterialButton
+            android:fontFamily="@font/poppins"
+            android:id="@+id/alert_dialog_positive_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Confirm" />
+    </LinearLayout>
+</LinearLayout>

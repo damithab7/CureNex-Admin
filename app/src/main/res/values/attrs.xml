@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="textColorCustom" format="reference"/>
+    <attr name="mainBgCustom" format="reference"/>
+    <attr name="gradientFirstColor" format="reference"/>
+    <attr name="gradientMiddleColor" format="reference"/>
+    <attr name="gradientLastColor" format="reference"/>
+    <attr name="inputFieldBackground" format="reference"/>
+
+    <attr name="customBackgroundTheme" format="reference"/>
+    <attr name="customStrokeColor" format="reference"/>
+    <attr name="navBgColor" format="reference"/>
+
+    <attr name="tab_background" format="reference"/>
+    <attr name="tab_indicator_bg" format="reference"/>
+</resources>

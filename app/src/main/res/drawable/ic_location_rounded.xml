@@ -1,0 +1,10 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/bg_circle_gray" />
+
+    <item
+        android:drawable="@drawable/locationicon"
+        android:top="@dimen/icon_round_size"
+        android:bottom="@dimen/icon_round_size"
+        android:left="@dimen/icon_round_size"
+        android:right="@dimen/icon_round_size" />
+</layer-list>

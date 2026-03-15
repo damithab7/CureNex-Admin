@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:id="@+id/side_nav_group_main">
+        <item
+            android:id="@+id/side_nav_dashboard"
+            android:checkable="true"
+            android:icon="@drawable/homeicon"
+            android:title="@string/side_nav_dashboard_title"
+            android:visible="true" />
+
+        <item
+            android:id="@+id/side_nav_therapists"
+            android:checkable="true"
+            android:icon="@drawable/therapisticon"
+            android:title="@string/side_nav_therapist_title"
+            android:visible="true" />
+
+        <item
+            android:id="@+id/side_nav_users"
+            android:checkable="true"
+            android:icon="@drawable/usericon3"
+            android:title="@string/side_nav_users_title"
+            android:visible="true" />
+        <item
+            android:id="@+id/side_nav_products"
+            android:checkable="true"
+            android:icon="@drawable/producticon"
+            android:title="@string/side_nav_products_title"
+            android:visible="true" />
+        <item
+            android:id="@+id/side_nav_account"
+            android:checkable="true"
+            android:icon="@drawable/accountnav"
+            android:title="@string/side_nav_account_title"
+            android:visible="false" />
+
+    </group>
+
+    <group android:id="@+id/side_nav_group_auth">
+
+        <item
+            android:id="@+id/side_nav_logout"
+            android:icon="@drawable/signouticon"
+            android:title="@string/side_nav_logout_title"
+            android:visible="true" />
+    </group>
+</menu>

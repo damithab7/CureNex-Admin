@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.SignInActivity">
+
+    <View
+        android:id="@+id/bottomBackgroundCard"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_login_card"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signin_top_layout" />
+
+    <TextView
+        android:id="@+id/SignInText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin_horizontal"
+        android:layout_marginTop="160dp"
+        android:fontFamily="@font/poppins"
+        android:text="@string/sign_in_txt"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.135"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/default_margin_all"
+        android:layout_marginEnd="@dimen/default_margin_all"
+        android:layout_marginBottom="@dimen/default_margin_all"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SignInText">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="@dimen/layout_padding_default"
+            tools:context=".fragment.SignInEmailFragment">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/signInEmailLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="@string/email_placeholder_hint"
+                app:placeholderText="example@email.com"
+                app:placeholderTextAppearance="@style/placeholderFont">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/signInEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/emailicon"
+                    android:drawablePadding="@dimen/edit_text_icon_padding"
+                    android:fontFamily="@font/poppins"
+                    android:inputType="textEmailAddress"
+                    android:padding="@dimen/edit_text_padding"
+                    android:textSize="@dimen/edit_text_size" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/password_placeholder_hint"
+                android:id="@+id/signInPasswordLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                >
+                <EditText
+                    android:id="@+id/signInPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/passwordicon"
+                    android:drawablePadding="@dimen/edit_text_icon_padding"
+                    android:fontFamily="@font/poppins"
+                    android:inputType="textPassword"
+                    android:padding="@dimen/edit_text_padding"
+                    android:textSize="@dimen/edit_text_size" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/signin_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_margin_top"
+                android:fontFamily="@font/poppins"
+                android:text="@string/continue_btn_txt"
+                android:textSize="@dimen/button_text_size" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/signin_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/SignInText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
+            android:includeFontPadding="false"
+            android:text="Admin"
+            android:textSize="60sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/poppins"
+            android:paddingBottom="10dp"
+            android:text="@string/sign_in_welcome"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

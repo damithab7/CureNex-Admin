@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_dashboard"
+        android:icon="@drawable/homenav"
+        android:title="@string/bottom_nav_dashboard_txt" />
+    <item
+        android:id="@+id/nav_therapists"
+        android:icon="@drawable/therapisticon"
+        android:title="@string/bottom_nav_therapist_txt" />
+    <item
+        android:id="@+id/nav_users"
+        android:icon="@drawable/usericon3"
+        android:title="@string/bottom_nav_user_txt" />
+    <item
+        android:id="@+id/nav_products"
+        android:icon="@drawable/producticon"
+        android:title="@string/bottom_nav_product_txt" />
+    <item
+        android:visible="false"
+        android:id="@+id/nav_account"
+        android:icon="@drawable/accountnav"
+        android:title="@string/bottom_nav_account_txt" />
+</menu>
