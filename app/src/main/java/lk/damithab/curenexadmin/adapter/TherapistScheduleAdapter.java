@@ -79,9 +79,9 @@ public class TherapistScheduleAdapter extends RecyclerView.Adapter<TherapistSche
 
     private String getDayOfWeek(int dayOfWeek) {
         Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, dayOfWeek);
         SimpleDateFormat dayNumFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
-        List<String> days = new ArrayList<>();
-        return dayNumFormat.format(calendar.get(dayOfWeek));
+        return dayNumFormat.format(calendar.getTime());
     }
 
     @Override

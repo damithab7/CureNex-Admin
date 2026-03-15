@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -202,16 +203,20 @@ public class AddTherapistFragment extends Fragment {
         });
 
         scheduleAdapter = new TherapistScheduleAdapter();
+        binding.addTherapistScheduleRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         scheduleAdapter.setOnRemoveListener(position -> {
             if(therapistSchedules != null){
                 therapistSchedules.remove(position);
+                scheduleAdapter.setScheduleList(therapistSchedules);
             }
         });
 
         binding.addTherapistScheduleBtn.setOnClickListener(v -> {
             AddScheduleBottomSheet sheet = new AddScheduleBottomSheet((schedule) -> {
                 therapistSchedules.add(schedule);
+                Log.d(TAG, "onViewCreated: Schedule Time"+ schedule.getStartTime());
                 scheduleAdapter.setScheduleList(therapistSchedules);
+                binding.addTherapistScheduleRecycler.setAdapter(scheduleAdapter);
             });
 
             sheet.show(getChildFragmentManager(), "ScheduleBottomSheet");
