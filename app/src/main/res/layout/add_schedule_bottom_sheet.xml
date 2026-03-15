@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins"
-            android:inputType="text"
+            android:inputType="number"
             android:padding="@dimen/edit_text_padding"
             android:textSize="@dimen/edit_text_size" />
     </com.google.android.material.textfield.TextInputLayout>

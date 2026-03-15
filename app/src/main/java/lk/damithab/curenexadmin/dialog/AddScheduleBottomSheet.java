@@ -101,16 +101,13 @@ public class AddScheduleBottomSheet extends BottomSheetDialogFragment {
                 new ToastDialog(getParentFragmentManager(), "Please select a time before add");
                 return;
             }
-            if( maxAppoin == null){
-                new ToastDialog(getParentFragmentManager(), "Please add max appointments for the time period");
-                return;
-            }
 
             int[] finaMaxAppointments = {0};
             try {
                 finaMaxAppointments[0] = Integer.parseInt(maxAppoin);
             } catch (NumberFormatException e) {
                 new ToastDialog(getParentFragmentManager(), "Invalid value for max appointments");
+                return;
             }
 
             String scheduleId = String.valueOf(System.currentTimeMillis());
@@ -119,7 +116,7 @@ public class AddScheduleBottomSheet extends BottomSheetDialogFragment {
 
             TherapistSchedule schedule = TherapistSchedule.builder().scheduleId(scheduleId).status(Boolean.TRUE).dayOfWeek(dayOfWeek).startTime(selectedTime).maxAppointments(finaMaxAppointments[0]).build();
             listener.onAdded(schedule);
-            dismiss(); // Closes the sheet
+            dismiss();
         });
     }
 

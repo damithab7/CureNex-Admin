@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -67,13 +68,23 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
             holder.userStatus.setText("Deactive");
             holder.userStatus.setTextColor(Color.RED);
         }
-        StorageReference ref = storage.getReference(user.getProfileUrl());
+        if (user.getProfileUrl().startsWith("https")) {
+            GlideApp.with(holder.itemView.getContext())
+                    .load(user.getProfileUrl())
+                    .placeholder(R.drawable.imageplaceholder2)
+                    .centerCrop()
+                    .into(holder.userImage);
+        } else {
+            StorageReference ref = storage.getReference(user.getProfileUrl());
 
-        GlideApp.with(holder.itemView.getContext())
-                .load(ref)
-                .centerCrop()
-                .placeholder(R.drawable.imageplaceholder2)
-                .into(holder.userImage);
+            GlideApp.with(holder.itemView.getContext())
+                    .load(ref)
+                    .centerCrop()
+                    .placeholder(R.drawable.imageplaceholder2)
+                    .into(holder.userImage);
+
+
+        }
 
         holder.editButton.setOnClickListener(v->{
             if(editListener != null){
@@ -108,8 +119,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
             this.userName = itemView.findViewById(R.id.item_user_name);
             this.userEmail = itemView.findViewById(R.id.item_user_email);
             this.userStatus = itemView.findViewById(R.id.item_user_status);
-            this.editButton = itemView.findViewById(R.id.item_product_edit);
-            this.btnRemove = itemView.findViewById(R.id.item_product_remove);
+            this.editButton = itemView.findViewById(R.id.item_user_edit);
+            this.btnRemove = itemView.findViewById(R.id.item_user_remove);
         }
     }
 

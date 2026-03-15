@@ -67,7 +67,7 @@
                     app:layout_constraintTop_toBottomOf="@id/home_c_card" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/item_therapist_remove"
+                    android:id="@+id/item_user_remove"
                     style="@style/Widget.Material3.Button.IconButton"
                     android:layout_gravity="end"
                     android:layout_width="wrap_content"
@@ -119,7 +119,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/home_c_card" />
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/item_therapist_edit"
+                    android:id="@+id/item_user_edit"
                     style="@style/Widget.Material3.Button.IconButton"
                     android:layout_gravity="end"
                     android:layout_width="wrap_content"
