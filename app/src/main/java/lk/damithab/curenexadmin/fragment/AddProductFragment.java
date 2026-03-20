@@ -202,7 +202,6 @@ public class AddProductFragment extends Fragment implements AdapterView.OnItemSe
                 return;
             }
 
-
             requireActivity().getWindow().setFlags(
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE

@@ -47,6 +47,9 @@ public class TherapistFragment extends Fragment {
 
     private Map<String, Service> serviceMap;
 
+    private int completedTasks = 0;
+    private final int TOTAL_TASKS = 1;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,9 +83,12 @@ public class TherapistFragment extends Fragment {
 
         binding.allTherapistsRecycler.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
 
+        spinnerDialog = SpinnerDialog.show(getParentFragmentManager());
+
         db.collection("therapist").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot qds) {
+                checkAllTasksFinished();
                 if (!qds.isEmpty()) {
                     List<Therapist> therapistList = qds.toObjects(Therapist.class);
                     for (Therapist therapist : therapistList) {
@@ -96,6 +102,7 @@ public class TherapistFragment extends Fragment {
                         EditTherapistFragment fragment = new EditTherapistFragment();
                         Bundle bundle = new Bundle();
                         bundle.putString("therapistId", therapist.getTherapistId());
+                        fragment.setArguments(bundle);
 
                         getParentFragmentManager().beginTransaction()
                                 .replace(R.id.navContainerView, fragment)
@@ -112,7 +119,7 @@ public class TherapistFragment extends Fragment {
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        spinnerDialog.show(getParentFragmentManager(), AddProductFragment.class.getSimpleName());
+                                        spinnerDialog = SpinnerDialog.show(getParentFragmentManager());
                                         db.collection("therapist").document(documentId)
                                                 .delete()
                                                 .addOnSuccessListener(aVoid -> {
@@ -133,6 +140,8 @@ public class TherapistFragment extends Fragment {
                     binding.allTherapistsRecycler.setAdapter(adapter);
                 }
             }
+        }).addOnFailureListener(error->{
+            checkAllTasksFinished();
         });
 
         binding.addTherapistBtn.setOnClickListener(v -> {
@@ -141,6 +150,16 @@ public class TherapistFragment extends Fragment {
                     .addToBackStack(null)
                     .commit();
         });
+    }
+
+    private void checkAllTasksFinished() {
+        completedTasks++;
+        if (completedTasks >= TOTAL_TASKS) {
+            if (spinnerDialog.isAdded()) {
+                spinnerDialog.dismissAllowingStateLoss();
+            }
+            completedTasks = 0; // Reset for swipe-to-refresh
+        }
     }
 
     private void deleteTherapistImage(String documentId) {

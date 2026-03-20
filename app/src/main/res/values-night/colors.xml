@@ -3,6 +3,8 @@
 
     <color name="stock_color">#74C69D</color>
 
+    <color name="skeleton_background">#2A2A2A</color> <color name="skeleton_shimmer">#3A3A3A</color>
+
     <color name="md_theme_primary">#81D3DF</color>
     <color name="md_theme_onPrimary">#00363C</color>
     <color name="md_theme_primaryContainer">#004F57</color>
