@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetTop="@dimen/tab_indicator_padding"
+    android:insetBottom="@dimen/tab_indicator_padding"
+    android:insetLeft="@dimen/tab_indicator_padding"
+    android:insetRight="@dimen/tab_indicator_padding">
+    <shape >
+        <solid android:color="?attr/tab_indicator_bg" />
+        <corners android:radius="5dp"/>
+    </shape>
+</inset>
