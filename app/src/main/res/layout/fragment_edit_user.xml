@@ -1,14 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragment.EditUserFragment">
+    android:layout_height="match_parent">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_gravity="bottom"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        android:layout_above="@+id/save_profile_btn"
+        android:scrollbars="none">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@drawable/top_corners_bg"
+            android:orientation="vertical"
+            android:padding="25dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginBottom="20dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/main_image_view"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/userplacholder"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:shapeAppearanceOverlay="@style/CircleImage" />
+
+                <ImageView
+                    android:id="@+id/profile_edit_image"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_circle_gray"
+                    android:contentDescription="Edit Image"
+                    android:elevation="4dp"
+                    android:padding="8dp"
+                    android:src="@drawable/edit_square_24px"
+                    app:layout_constraintBottom_toBottomOf="@id/main_image_view"
+                    app:layout_constraintEnd_toEndOf="@id/main_image_view" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/profileFirstNameLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/signup_margin_top"
+                android:hint="@string/firstname_placeholder_hint"
+                app:placeholderText="Firstname"
+                app:placeholderTextAppearance="@style/placeholderFont">
+
+                <EditText
+                    android:id="@+id/firstNameProfileInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:drawableStart="@drawable/usericon"
+                    android:drawablePadding="@dimen/edit_text_icon_padding"
+                    android:fontFamily="@font/poppins"
+
+                    android:inputType="text"
+                    android:padding="@dimen/edit_text_padding"
+                    android:textSize="@dimen/edit_text_size" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/profileLastNameLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/signup_margin_top"
+                android:hint="@string/lastname_placeholder_hint"
+                app:placeholderText="Lastname"
+                app:placeholderTextAppearance="@style/placeholderFont">
+
+                <EditText
+                    android:id="@+id/lastNameProfileInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginTop="@dimen/default_margin_top"
+                    android:drawableStart="@drawable/usericon"
+                    android:drawablePadding="@dimen/edit_text_icon_padding"
+                    android:fontFamily="@font/poppins"
+
+                    android:inputType="text"
+                    android:padding="@dimen/edit_text_padding"
+                    android:textSize="@dimen/edit_text_size" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_marginTop="@dimen/signup_margin_top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:text="Change Status"
+                android:textSize="13sp" />
+
+            <Spinner
+                android:id="@+id/edit_user_status_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="40dp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/save_profile_btn"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="45dp"
+        android:layout_marginVertical="5dp"
+        android:layout_marginHorizontal="25dp"
+        android:fontFamily="@font/poppins"
+        android:text="Save"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textSize="@dimen/default_font_size" />
+</RelativeLayout>
