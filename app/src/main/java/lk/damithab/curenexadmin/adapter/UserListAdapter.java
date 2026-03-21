@@ -82,8 +82,6 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
                     .centerCrop()
                     .placeholder(R.drawable.imageplaceholder2)
                     .into(holder.userImage);
-
-
         }
 
         holder.editButton.setOnClickListener(v->{

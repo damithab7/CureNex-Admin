@@ -10,7 +10,7 @@
         android:layout_gravity="bottom"
         android:fillViewport="true"
         android:overScrollMode="never"
-        android:layout_above="@+id/save_profile_btn"
+        android:layout_above="@+id/add_new_user_btn"
         android:scrollbars="none">
 
         <LinearLayout
@@ -27,7 +27,7 @@
                 android:layout_marginBottom="20dp">
 
                 <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/main_image_view"
+                    android:id="@+id/add_user_img"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:scaleType="centerCrop"
@@ -39,7 +39,7 @@
                     app:shapeAppearanceOverlay="@style/CircleImage" />
 
                 <ImageView
-                    android:id="@+id/profile_edit_image"
+                    android:id="@+id/add_user_add_img_btn"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:background="@drawable/bg_circle_gray"
@@ -47,13 +47,13 @@
                     android:elevation="4dp"
                     android:padding="8dp"
                     android:src="@drawable/edit_square_24px"
-                    app:layout_constraintBottom_toBottomOf="@id/main_image_view"
-                    app:layout_constraintEnd_toEndOf="@id/main_image_view" />
+                    app:layout_constraintBottom_toBottomOf="@id/add_user_img"
+                    app:layout_constraintEnd_toEndOf="@id/add_user_img" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/profileFirstNameLayout"
+                android:id="@+id/add_user_firstname_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -63,50 +63,93 @@
                 app:placeholderTextAppearance="@style/placeholderFont">
 
                 <EditText
-                    android:id="@+id/firstNameProfileInput"
+                    android:id="@+id/add_user_firstname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:drawableStart="@drawable/usericon"
                     android:drawablePadding="@dimen/edit_text_icon_padding"
                     android:fontFamily="@font/poppins"
-
                     android:inputType="text"
                     android:padding="@dimen/edit_text_padding"
                     android:textSize="@dimen/edit_text_size" />
+
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/profileLastNameLayout"
+                android:id="@+id/add_user_lastname_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/signup_margin_top"
-                android:layout_marginBottom="20dp"
                 android:hint="@string/lastname_placeholder_hint"
                 app:placeholderText="Lastname"
                 app:placeholderTextAppearance="@style/placeholderFont">
 
                 <EditText
-                    android:id="@+id/lastNameProfileInput"
+                    android:id="@+id/add_user_lastname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:layout_marginTop="@dimen/default_margin_top"
                     android:drawableStart="@drawable/usericon"
                     android:drawablePadding="@dimen/edit_text_icon_padding"
                     android:fontFamily="@font/poppins"
-
                     android:inputType="text"
                     android:padding="@dimen/edit_text_padding"
                     android:textSize="@dimen/edit_text_size" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/add_user_email_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/signup_margin_top"
+                android:hint="Email"
+                app:placeholderText="Email"
+                app:placeholderTextAppearance="@style/placeholderFont">
+
+                <EditText
+                    android:id="@+id/add_user_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/default_margin_top"
+                    android:drawableStart="@drawable/usericon"
+                    android:drawablePadding="@dimen/edit_text_icon_padding"
+                    android:fontFamily="@font/poppins"
+                    android:inputType="textEmailAddress"
+                    android:padding="@dimen/edit_text_padding"
+                    android:textSize="@dimen/edit_text_size" />
+
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/add_user_password_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/signup_margin_top"
+                android:hint="Password"
+                app:placeholderText="Password"
+                app:placeholderTextAppearance="@style/placeholderFont">
+
+                <EditText
+                    android:id="@+id/add_user_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/default_margin_top"
+                    android:drawableStart="@drawable/usericon"
+                    android:drawablePadding="@dimen/edit_text_icon_padding"
+                    android:fontFamily="@font/poppins"
+                    android:inputType="text"
+                    android:padding="@dimen/edit_text_padding"
+                    android:textSize="@dimen/edit_text_size" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/save_profile_btn"
+        android:id="@+id/add_new_user_btn"
         style="@style/Widget.Material3.Button.TonalButton"
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
