@@ -13,29 +13,41 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import lk.damithab.curenexadmin.R;
 import lk.damithab.curenexadmin.adapter.TherapistScheduleAdapter;
 import lk.damithab.curenexadmin.databinding.FragmentEditTherapistBinding;
 import lk.damithab.curenexadmin.dialog.AddScheduleBottomSheet;
 import lk.damithab.curenexadmin.dialog.SpinnerDialog;
+import lk.damithab.curenexadmin.dialog.ToastDialog;
 import lk.damithab.curenexadmin.listener.FirebaseCallback;
 import lk.damithab.curenexadmin.model.Gender;
 import lk.damithab.curenexadmin.model.Service;
@@ -64,7 +76,7 @@ public class EditTherapistFragment extends Fragment {
     private FirebaseStorage storage;
 
     private int completedTasks = 0;
-    private final int TOTAL_TASKS = 5;
+    private final int TOTAL_TASKS = 2;
 
     private SpinnerDialog spinnerDialog;
 
@@ -72,18 +84,20 @@ public class EditTherapistFragment extends Fragment {
 
     private Therapist therapist;
 
-    private Spinner titleSpinner,genderSpinner, serviceSpinner;
+    private Spinner titleSpinner, genderSpinner, serviceSpinner;
 
     private TherapistScheduleAdapter scheduleAdapter;
 
-    private List<TherapistSchedule> therapistSchedules;
+    private List<TherapistSchedule> therapistSchedules = new ArrayList<>();
+
+    Set<String> localIds = new HashSet<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
-        if(getArguments() != null){
+        if (getArguments() != null) {
             this.therapistId = getArguments().getString("therapistId");
         }
     }
@@ -135,7 +149,6 @@ public class EditTherapistFragment extends Fragment {
         titleAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         titleSpinner.setAdapter(titleAdapter);
 
-
         binding.editTherapistImageRemoveBtn.setOnClickListener(v -> {
             if (selectedImage != null) {
                 selectedImage = null;
@@ -145,11 +158,45 @@ public class EditTherapistFragment extends Fragment {
             }
         });
 
-        getTherapist(therapist->{
+        getTherapist(therapist -> {
             this.therapist = therapist;
 
             StorageReference ref = storage.getReference(therapist.getTherapistImage());
             titleSpinner.setSelection(titleAdapter.getPosition(therapist.getTitle()));
+            binding.editTherapistBio.setText(therapist.getBio());
+
+            String[] name = therapist.getName().split(" ");
+            binding.editTherapistFirstName.setText(name[0]);
+            binding.editTherapistLastName.setText(name[1]);
+            binding.editTherapistRate.setText(String.valueOf(therapist.getRate()));
+            binding.editTherapistWorkEmail.setText(therapist.getWorkEmail());
+            binding.editTherapistWorkMobile.setText(therapist.getWorkMobileNo());
+
+
+            StorageReference sref = storage.getReference(therapist.getTherapistImage());
+
+            sref.getDownloadUrl().addOnSuccessListener(imageUri -> {
+                selectedImage = imageUri;
+            });
+
+            db.collection("therapist").document(therapist.getTherapistId()).collection("schedule")
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot qds) {
+                            if (!qds.isEmpty()) {
+                                therapistSchedules = qds.toObjects(TherapistSchedule.class);
+                                TherapistScheduleAdapter therapistScheduleAdapter = new TherapistScheduleAdapter();
+                                therapistScheduleAdapter.setScheduleList(therapistSchedules);
+
+                                binding.editTherapistScheduleRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+                                binding.editTherapistScheduleRecycler.setAdapter(therapistScheduleAdapter);
+
+                            }
+                        }
+                    }).addOnFailureListener(error -> {
+
+                    });
 
 
             GlideApp.with(getContext())
@@ -170,7 +217,7 @@ public class EditTherapistFragment extends Fragment {
 
                         for (Gender gender : genderList) {
                             genders.add(gender.getName());
-                            if(gender.getGenderId().equals(therapist.getGenderId())){
+                            if (gender.getGenderId().equals(therapist.getGenderId())) {
                                 selectedGender = gender.getName();
                             }
                         }
@@ -207,7 +254,7 @@ public class EditTherapistFragment extends Fragment {
 
                         for (Service service : serviceList) {
                             services.add(service.getName());
-                            if(service.getServiceId().equals(therapist.getServiceId())){
+                            if (service.getServiceId().equals(therapist.getServiceId())) {
                                 selectedService = service.getName();
                             }
                         }
@@ -258,9 +305,190 @@ public class EditTherapistFragment extends Fragment {
 
         loadListeners();
 
-        binding.saveTherapistBtn.setOnClickListener(v->{
+        binding.saveTherapistBtn.setOnClickListener(v -> {
+
+            String firstName = binding.editTherapistFirstName.getText().toString().trim();
+            String lastName = binding.editTherapistLastName.getText().toString().trim();
+            String rate = binding.editTherapistRate.getText().toString();
+            String bio = binding.editTherapistBio.getText().toString();
+            String workEmail = binding.editTherapistWorkEmail.getText().toString();
+            String workMobileNo = binding.editTherapistWorkMobile.getText().toString();
+
+            /// validation
+            if (selectedImage == null) {
+                new ToastDialog(getParentFragmentManager(), "Please select therapist image");
+                return;
+            }
+
+            if (firstName.isEmpty()) {
+                binding.editTherapistFirstNameLayout.setErrorEnabled(true);
+                binding.editTherapistFirstNameLayout.setError("Firstname is required!");
+                binding.editTherapistFirstName.requestFocus();
+                return;
+            }
+            if (lastName.isEmpty()) {
+                binding.editTherapistLastNameLayout.setErrorEnabled(true);
+                binding.editTherapistLastNameLayout.setError("Lastname is required!");
+                binding.editTherapistLastName.requestFocus();
+                return;
+            }
+
+            if (bio.isEmpty()) {
+                binding.editTherapistBioLayout.setErrorEnabled(true);
+                binding.editTherapistBioLayout.setError("Bio is required!");
+                binding.editTherapistBio.requestFocus();
+                return;
+            }
+            if (workEmail.isEmpty()) {
+                binding.editTherapistWorkEmailLayout.setErrorEnabled(true);
+                binding.editTherapistWorkEmailLayout.setError("WorkEmail is required!");
+                binding.editTherapistWorkEmail.requestFocus();
+                return;
+            }
+            if (workMobileNo.isEmpty()) {
+                binding.editTherapistWorkMobileLayout.setErrorEnabled(true);
+                binding.editTherapistWorkMobileLayout.setError("WorkMobileNo is required!");
+                binding.editTherapistWorkMobile.requestFocus();
+                return;
+            }
+            if (rate.isEmpty()) {
+                binding.editTherapistRateLayout.setErrorEnabled(true);
+                binding.editTherapistRateLayout.setError("Rate is required!");
+                binding.editTherapistRate.requestFocus();
+                return;
+            }
+
+            requireActivity().getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            );
+
+            spinnerDialog.show(getParentFragmentManager(), AddTherapistFragment.class.getSimpleName());
+
+            updateTherapist();
 
         });
+
+
+    }
+
+    private void updateTherapist() {
+
+        String firstName = binding.editTherapistFirstName.getText().toString().trim();
+        String lastName = binding.editTherapistLastName.getText().toString().trim();
+        String therapistName = firstName + " " + lastName;
+        String rate = binding.editTherapistRate.getText().toString();
+        String bio = binding.editTherapistBio.getText().toString();
+        String workEmail = binding.editTherapistWorkEmail.getText().toString();
+        String workMobileNo = binding.editTherapistWorkMobile.getText().toString();
+        titleName = titleSpinner.getSelectedItem().toString();
+
+        double finalRate = Double.parseDouble(rate);
+
+        db.collection("therapist").document(therapistId).update("name",
+                        therapistName, "serviceId", serviceId,
+                        "genderId", genderId,
+                        "title", titleName,
+                        "bio", bio,
+                        "rate", finalRate,
+                        "workEmail", workEmail,
+                        "workMobileNo", workMobileNo)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+
+                        checkAllTasksFinished(); /// 1
+                        saveTherapistImage();
+                        saveTherapistSchedule();
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        checkAllTasksFinished(); /// 1
+                        requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    }
+                });
+
+    }
+
+    public void saveTherapistImage() {
+
+        StorageReference fileRef = storage.getReference("therapist-images")
+                .child(therapistId);
+
+        if (selectedImage.toString().startsWith("content://") || selectedImage.toString().startsWith("file://")) {
+            fileRef.putFile(selectedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    checkAllTasksFinished(); /// 2
+                    requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    new ToastDialog(getParentFragmentManager(), "Therapist Added successfully!");
+
+                    if (isAdded()) {
+                        requireActivity().getSupportFragmentManager().popBackStack();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    checkAllTasksFinished(); /// 2
+                }
+            });
+        }
+
+
+    }
+
+    private void saveTherapistSchedule() {
+
+        Set<String> localIds = new HashSet<>();
+        for (TherapistSchedule sch : therapistSchedules) {
+            localIds.add(sch.getScheduleId());
+        }
+
+        requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        db.collection("therapist").document(therapistId).collection("schedule").get()
+                .addOnSuccessListener(qds -> {
+                    checkAllTasksFinished(); /// 3
+                    if (!qds.isEmpty()) {
+                        WriteBatch batch = db.batch();
+
+                        Set<String> dbIds = new HashSet<>();
+
+                        for (QueryDocumentSnapshot doc : qds) {
+                            String docId = doc.getId();
+                            dbIds.add(docId);
+
+                            if (!localIds.contains(docId)) {
+                                batch.delete(doc.getReference());
+                            }
+                        }
+
+                        for (TherapistSchedule sch : therapistSchedules) {
+                            if (!dbIds.contains(sch.getScheduleId())) {
+                                DocumentReference newDoc = db.collection("therapist")
+                                        .document(therapistId)
+                                        .collection("schedule")
+                                        .document(sch.getScheduleId());
+                                batch.set(newDoc, sch);
+                            }
+                        }
+
+                        batch.commit().addOnSuccessListener(aVoid -> {
+                            Log.d("Firestore", "All schedules added successfully!");
+                            if (isAdded()) {
+                                requireActivity().getSupportFragmentManager().popBackStack();
+                            }
+                        }).addOnFailureListener(e -> {
+                            Log.e("Firestore", "Error adding schedules", e);
+                        });
+                    }
+                }).addOnFailureListener(error->{
+                    checkAllTasksFinished(); /// 3
+                });
 
 
     }
@@ -286,13 +514,22 @@ public class EditTherapistFragment extends Fragment {
             }
     );
 
-    private void getTherapist(FirebaseCallback<Therapist> callback){
+    private void checkAllTasksFinished() {
+        completedTasks++;
+        if (completedTasks >= TOTAL_TASKS) {
+            spinnerDialog.dismiss();
+            completedTasks = 0; // Reset for swipe-to-refresh
+        }
+    }
+
+
+    private void getTherapist(FirebaseCallback<Therapist> callback) {
         db.collection("therapist").whereEqualTo("therapistId", therapistId)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot qds) {
-                        if(!qds.isEmpty()){
+                        if (!qds.isEmpty()) {
                             Therapist therapist = qds.toObjects(Therapist.class).get(0);
                             callback.onCallback(therapist);
                         }
@@ -300,7 +537,118 @@ public class EditTherapistFragment extends Fragment {
                 });
     }
 
-    private void loadListeners(){
+    private void loadListeners() {
 
+        binding.editTherapistFirstName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                binding.editTherapistFirstNameLayout.setErrorEnabled(false);
+            }
+        });
+        binding.editTherapistLastName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                binding.editTherapistLastNameLayout.setErrorEnabled(false);
+            }
+        });
+
+        binding.editTherapistBio.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                binding.editTherapistBioLayout.setErrorEnabled(false);
+            }
+        });
+        binding.editTherapistWorkEmail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                binding.editTherapistWorkEmailLayout.setErrorEnabled(false);
+            }
+        });
+        binding.editTherapistWorkMobile.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                binding.editTherapistWorkMobileLayout.setErrorEnabled(false);
+            }
+        });
+        binding.editTherapistRate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                binding.editTherapistRateLayout.setErrorEnabled(false);
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AnimationUtil.bottomSlideDown(getActivity().findViewById(R.id.bottomNavigationView));
+        AnimationUtil.topSlideUp(getActivity().findViewById(R.id.main_toolbar));
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AnimationUtil.bottomSlideUp(getActivity().findViewById(R.id.bottomNavigationView));
+        AnimationUtil.topSlideDown(getActivity().findViewById(R.id.main_toolbar));
     }
 }

@@ -604,7 +604,6 @@ public class AddTherapistFragment extends Fragment {
 
                     checkAllTasksFinished(); /// 3
                     requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
                 });
     }
 
