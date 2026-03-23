@@ -27,6 +27,7 @@ import lk.damithab.curenexadmin.R;
 import lk.damithab.curenexadmin.adapter.ProductListAdapter;
 import lk.damithab.curenexadmin.adapter.UserListAdapter;
 import lk.damithab.curenexadmin.databinding.FragmentUserBinding;
+import lk.damithab.curenexadmin.dialog.CustomAlertDialog;
 import lk.damithab.curenexadmin.dialog.SpinnerDialog;
 import lk.damithab.curenexadmin.dialog.ToastDialog;
 import lk.damithab.curenexadmin.model.Product;
@@ -91,31 +92,43 @@ public class UserFragment extends Fragment {
                             adapter.setOnRemoveListener(position -> {
                                 String documentId = userList.get(position).getUid();
 
-                                new AlertDialog.Builder(getActivity())
+                                new CustomAlertDialog(getContext())
                                         .setTitle("Confirmation Message")
                                         .setMessage("Are you sure you want to delete this user?")
-                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                spinnerDialog = SpinnerDialog.show(getParentFragmentManager());
+                                        .setPositiveButton("Remove", v -> {
+                                            spinnerDialog = SpinnerDialog.show(getParentFragmentManager());
+                                            db.collection("users").document(documentId)
+                                                    .delete()
+                                                    .addOnSuccessListener(aVoid -> {
+                                                        deleteUserImage(documentId);
+                                                        userList.remove(position);
+                                                        adapter.notifyItemRemoved(position);
+                                                        adapter.notifyItemRangeChanged(position, userList.size());
 
-                                                /// Also need to remove the auth from firebase
-                                                db.collection("users").document(documentId)
-                                                        .delete()
-                                                        .addOnSuccessListener(aVoid -> {
-                                                            deleteUserImage(documentId);
-                                                            userList.remove(position);
-                                                            adapter.notifyItemRemoved(position);
-                                                            adapter.notifyItemRangeChanged(position, userList.size());
-
-                                                        })
-                                                        .addOnFailureListener(exception -> {
-                                                            spinnerDialog.dismiss();
-                                                        });
-                                            }
+                                                    })
+                                                    .addOnFailureListener(exception -> {
+                                                        spinnerDialog.dismiss();
+                                                    });
                                         })
-                                        .setNegativeButton("No", null)
+                                        .setNegativeButton()
                                         .show();
+
+//                                new AlertDialog.Builder(getActivity())
+//                                        .setTitle("Confirmation Message")
+//                                        .setMessage("Are you sure you want to delete this user?")
+//                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                                spinnerDialog = SpinnerDialog.show(getParentFragmentManager());
+//
+//                                                /// Also need to remove the auth from firebase
+//                                                db.collection("users").document(documentId)
+//                                                        .delete()
+//
+//                                            }
+//                                        })
+//                                        .setNegativeButton("No", null)
+//                                        .show();
 
                             });
                             binding.allUsersRecycler.setAdapter(adapter);
@@ -125,12 +138,12 @@ public class UserFragment extends Fragment {
                     checkAllTasksFinished();
                 });
 
-        binding.addUserBtn.setOnClickListener(v -> {
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.navContainerView, new AddUserFragment())
-                    .addToBackStack(null)
-                    .commit();
-        });
+//        binding.addUserBtn.setOnClickListener(v -> {
+//            getParentFragmentManager().beginTransaction()
+//                    .replace(R.id.navContainerView, new AddUserFragment())
+//                    .addToBackStack(null)
+//                    .commit();
+//        });
     }
 
     private void deleteUserImage(String documentId) {
@@ -139,7 +152,7 @@ public class UserFragment extends Fragment {
         String imagePath = "profile-images/" + documentId;
         StorageReference imageRef = storage.getReference().child(imagePath);
 
-        new ToastDialog(getActivity().getSupportFragmentManager(), "Product removed successfully!");
+        new ToastDialog(getActivity().getSupportFragmentManager(), "User removed successfully!");
 
         imageRef.delete().addOnSuccessListener(aVoid -> {
             if (spinnerDialog.isAdded()) {

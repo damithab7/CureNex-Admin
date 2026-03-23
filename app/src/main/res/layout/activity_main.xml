@@ -22,6 +22,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:menu="@menu/toolbar_menu"
             app:navigationIcon="@drawable/menuicon"
             app:title="CureNex Admin"
             app:titleCentered="true"

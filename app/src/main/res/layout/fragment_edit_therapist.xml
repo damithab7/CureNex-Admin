@@ -282,6 +282,13 @@
                 android:textSize="@dimen/edit_text_size" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <Spinner
+            android:id="@+id/edit_therapist_status_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:minHeight="40dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/save_therapist_btn"
@@ -292,5 +299,6 @@
             android:fontFamily="@font/poppins"
             android:text="Update Therapist"
             android:textSize="@dimen/button_text_size" />
+
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

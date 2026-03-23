@@ -539,7 +539,7 @@ public class AddTherapistFragment extends Fragment {
                                             Therapist therapistItem = Therapist.builder().therapistId(therapistId).bio(bio)
                                                     .therapistImage(therapistImagePath).documentId(therapistId).name(therapistName)
                                                     .title(titleSpinner.getSelectedItem().toString()).genderId(genderId).serviceId(serviceId).rate(finalRate)
-                                                    .workEmail(workEmail).workMobileNo(workMobileNo).uid(uid).build();
+                                                    .workEmail(workEmail).workMobileNo(workMobileNo).uid(uid).status(Boolean.TRUE).build();
 
                                             therapistRef.set(therapistItem)
                                                     .addOnSuccessListener(aVoid -> {
@@ -602,7 +602,7 @@ public class AddTherapistFragment extends Fragment {
         Therapist therapistItem = Therapist.builder().therapistId(therapistId).bio(bio)
                 .therapistImage(therapistImagePath).documentId(therapistId).name(therapistName)
                 .title(titleSpinner.getSelectedItem().toString()).genderId(genderId).serviceId(serviceId).rate(finalRate)
-                .workEmail(workEmail).workMobileNo(workMobileNo).uid(userId).lastUpdate(lastUpdate).build();
+                .workEmail(workEmail).workMobileNo(workMobileNo).uid(userId).status(Boolean.TRUE).lastUpdate(lastUpdate).build();
 
         therapistRef.set(therapistItem)
                 .addOnSuccessListener(aVoid -> {

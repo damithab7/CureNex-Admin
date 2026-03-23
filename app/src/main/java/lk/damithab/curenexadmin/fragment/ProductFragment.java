@@ -120,12 +120,12 @@ public class ProductFragment extends Fragment {
                     checkAllTasksFinished();
                 });
 
-        binding.addProductBtn.setOnClickListener(v -> {
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.navContainerView, new AddProductFragment())
-                    .addToBackStack(null)
-                    .commit();
-        });
+//        binding.addProductBtn.setOnClickListener(v -> {
+//            getParentFragmentManager().beginTransaction()
+//                    .replace(R.id.navContainerView, new AddProductFragment())
+//                    .addToBackStack(null)
+//                    .commit();
+//        });
     }
 
     private void checkAllTasksFinished() {

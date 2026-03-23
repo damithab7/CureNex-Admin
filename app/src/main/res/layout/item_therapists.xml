@@ -87,22 +87,49 @@
                     />
             </LinearLayout>
 
-            <TextView
-                android:layout_weight="1"
-                android:id="@+id/item_therapist_service"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins"
-                android:padding="0dp"
-                android:text="In Stock"
-                android:textAlignment="center"
-                android:textColor="@color/md_theme_secondary"
-                android:textSize="@dimen/small_font_size" />
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/item_therapist_service"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:padding="0dp"
+                    android:text="In Stock"
+                    android:layout_marginEnd="10dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/md_theme_secondary"
+                    android:textSize="@dimen/small_font_size" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/md_theme_secondaryContainer"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp">
+                    <TextView
+                        android:layout_marginHorizontal="@dimen/item_card_margin_horizontal"
+                        android:textAlignment="center"
+                        android:fontFamily="@font/poppins"
+                        android:id="@+id/item_therapist_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="0dp"
+                        android:textColor="@color/stock_color"
+                        android:textSize="@dimen/small_font_size"
+                        android:text="In Stock" />
+
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_gravity="bottom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:orientation="horizontal">
                 <TextView
                     android:id="@+id/item_therapist_price"

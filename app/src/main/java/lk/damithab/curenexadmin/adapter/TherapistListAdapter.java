@@ -1,5 +1,6 @@
 package lk.damithab.curenexadmin.adapter;
 
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,6 +62,13 @@ public class TherapistListAdapter extends RecyclerView.Adapter<TherapistListAdap
         holder.therapistPrice.setText("LKR " + therapist.getRate() + "/h");
         holder.therapistService.setText(therapist.getServiceName());
 
+        if(therapist.isStatus()){
+            holder.therapistStatus.setText("Active");
+        }else{
+            holder.therapistStatus.setText("Deactivated");
+            holder.therapistStatus.setTextColor(Color.RED);
+        }
+
         StorageReference ref = storage.getReference(therapist.getTherapistImage());
 
         ObjectKey signature = new ObjectKey(therapist.getLastUpdate());
@@ -95,7 +103,7 @@ public class TherapistListAdapter extends RecyclerView.Adapter<TherapistListAdap
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView therapistImage;
-        TextView therapistName, therapistPrice, therapistService;
+        TextView therapistName, therapistPrice, therapistService, therapistStatus;
 
         MaterialButton editButton, btnRemove;
 
@@ -107,6 +115,7 @@ public class TherapistListAdapter extends RecyclerView.Adapter<TherapistListAdap
             this.therapistService = itemView.findViewById(R.id.item_therapist_service);
             this.editButton = itemView.findViewById(R.id.item_therapist_edit);
             this.btnRemove = itemView.findViewById(R.id.item_therapist_remove);
+            this.therapistStatus = itemView.findViewById(R.id.item_therapist_status);
         }
     }
 
