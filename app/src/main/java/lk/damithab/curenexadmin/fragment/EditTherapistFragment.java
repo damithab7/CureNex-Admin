@@ -91,6 +91,8 @@ public class EditTherapistFragment extends Fragment {
 
     private List<TherapistSchedule> therapistSchedules = new ArrayList<>();
 
+    private Boolean setStatus;
+
     Set<String> localIds = new HashSet<>();
 
     @Override
@@ -244,6 +246,32 @@ public class EditTherapistFragment extends Fragment {
                     }
                 }
             });
+
+            Spinner statusSpinner = binding.editTherapistStatusSpinner;
+            List<String> productStatus = new ArrayList<>();
+            productStatus.add("true");
+            productStatus.add("false");
+
+            ArrayAdapter<String> statusAdapter = new ArrayAdapter<String>(requireActivity(), R.layout.spinner_item, productStatus);
+            statusAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+            statusSpinner.setAdapter(statusAdapter);
+            statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    if (productStatus.get(i).equals("true")) {
+                        setStatus = true;
+                    } else {
+                        setStatus = false;
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+            statusSpinner.setSelection(statusAdapter.getPosition(String.valueOf(therapist.isStatus())));
+
 
             db.collection("services").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
@@ -403,6 +431,7 @@ public class EditTherapistFragment extends Fragment {
                         "rate", finalRate,
                         "workEmail", workEmail,
                         "workMobileNo", workMobileNo,
+                        "status", setStatus,
                         "lastUpdate", lastUpdate)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

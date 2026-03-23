@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             });
 
-                }else{
+                } else {
                     FirebaseAuth.getInstance().signOut();
                     redirectToLogin();
                 }
@@ -170,13 +170,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             });
 
 
-
         } else {
             if (spinner.isAdded()) {
                 spinner.dismissAllowingStateLoss();
             }
         }
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+
+        MenuItem addItemsContainer = menu.findItem(R.id.add_toolbar_icon);
+
+        addItemsContainer.setOnMenuItemClickListener(menuItem -> {
+
+            Intent intent = new Intent(MainActivity.this, AddActivity.class);
+            startActivity(intent);
+            return true;
+
+        });
+
+        return true;
     }
 
     public void loadFragment(Fragment fragment) {
@@ -189,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    public void redirectToLogin(){
+    public void redirectToLogin() {
         Intent intent = new Intent(MainActivity.this, SignInActivity.class);
         startActivity(intent);
         finish();
@@ -232,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navigationView.getMenu().findItem(R.id.side_nav_products).setChecked(true);
             bottomNavigationView.getMenu().findItem(R.id.nav_products).setChecked(true);
 
-        } else if (itemId == R.id.nav_account|| itemId == R.id.side_nav_account) {
+        } else if (itemId == R.id.nav_account || itemId == R.id.side_nav_account) {
             loadFragment(new AccountFragment());
             navigationView.getMenu().findItem(R.id.side_nav_account).setChecked(true);
             bottomNavigationView.getMenu().findItem(R.id.nav_account).setChecked(true);

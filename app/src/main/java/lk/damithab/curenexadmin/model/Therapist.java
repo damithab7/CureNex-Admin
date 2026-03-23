@@ -21,6 +21,7 @@ public class Therapist {
     @Setter(onMethod = @__({@Exclude}))
     private String serviceName;
     private long lastUpdate;
+    private boolean status;
 
     private String documentId;
     private String serviceId;

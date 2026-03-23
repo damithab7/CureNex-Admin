@@ -357,8 +357,7 @@ public class EditProductFragment extends Fragment {
                         "status", setProductStatus,
                         "categoryId", categoryId,
                         "images", imagesArray
-                )
-                .addOnSuccessListener(aVoid -> {
+                ).addOnSuccessListener(aVoid -> {
                     requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                     checkAllTasksFinished();
                     new ToastDialog(getParentFragmentManager(), "Product updated successfully!");

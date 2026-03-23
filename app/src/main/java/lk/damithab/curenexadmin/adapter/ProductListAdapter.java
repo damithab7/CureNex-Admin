@@ -69,6 +69,13 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
             holder.productStock.setText("Out of Stock");
             holder.productStock.setTextColor(Color.RED);
         }
+
+        if(product.isStatus()){
+            holder.productStatus.setText("Active");
+        }else{
+            holder.productStatus.setText("Deactivated");
+            holder.productStatus.setTextColor(Color.RED);
+        }
         StorageReference ref = storage.getReference(product.getImages().get(0));
 
         GlideApp.with(holder.itemView.getContext())
@@ -100,7 +107,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView productImage;
-        TextView productTitle, productPrice, productStock;
+        TextView productTitle, productPrice, productStock, productStatus;
 
         MaterialButton editButton, btnRemove;
 
@@ -112,6 +119,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
             this.productStock = itemView.findViewById(R.id.list_item_stock);
             this.editButton = itemView.findViewById(R.id.item_product_edit);
             this.btnRemove = itemView.findViewById(R.id.item_product_remove);
+            this.productStatus = itemView.findViewById(R.id.list_item_status);
         }
     }
 

@@ -15,8 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -29,6 +31,7 @@ import lk.damithab.curenexadmin.adapter.ProductListAdapter;
 import lk.damithab.curenexadmin.adapter.TherapistListAdapter;
 import lk.damithab.curenexadmin.databinding.FragmentProductBinding;
 import lk.damithab.curenexadmin.databinding.FragmentTherapistBinding;
+import lk.damithab.curenexadmin.dialog.CustomAlertDialog;
 import lk.damithab.curenexadmin.dialog.SpinnerDialog;
 import lk.damithab.curenexadmin.dialog.ToastDialog;
 import lk.damithab.curenexadmin.model.Product;
@@ -48,7 +51,7 @@ public class TherapistFragment extends Fragment {
     private Map<String, Service> serviceMap;
 
     private int completedTasks = 0;
-    private final int TOTAL_TASKS = 1;
+    private final int TOTAL_TASKS = 2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,12 +76,15 @@ public class TherapistFragment extends Fragment {
         db.collection("services")
                 .get()
                 .addOnSuccessListener(serviceSnaps -> {
+                    checkAllTasksFinished();
                     serviceSnaps.forEach(ds -> {
                         Service service = ds.toObject(Service.class);
                         if (service != null) {
                             serviceMap.put(service.getServiceId(), service);
                         }
                     });
+                }).addOnFailureListener(error -> {
+                    checkAllTasksFinished();
                 });
 
         binding.allTherapistsRecycler.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
@@ -93,7 +99,7 @@ public class TherapistFragment extends Fragment {
                     List<Therapist> therapistList = qds.toObjects(Therapist.class);
                     for (Therapist therapist : therapistList) {
                         Service service = serviceMap.get(therapist.getServiceId());
-                        if(service != null){
+                        if (service != null) {
                             therapist.setServiceName(service.getName());
                         }
                     }
@@ -113,43 +119,46 @@ public class TherapistFragment extends Fragment {
                     /// remove listener
                     adapter.setOnRemoveListener(position -> {
                         String documentId = therapistList.get(position).getTherapistId();
-                        new AlertDialog.Builder(getActivity())
+                        new CustomAlertDialog(getContext())
                                 .setTitle("Confirmation Message")
                                 .setMessage("Are you sure you want to delete this therapist?")
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        spinnerDialog = SpinnerDialog.show(getParentFragmentManager());
-                                        db.collection("therapist").document(documentId)
-                                                .delete()
-                                                .addOnSuccessListener(aVoid -> {
+                                .setPositiveButton("Remove", v -> {
+                                    spinnerDialog = SpinnerDialog.show(getParentFragmentManager());
+                                    db.collection("therapist").document(documentId).collection("schedule").get()
+                                            .addOnSuccessListener(qdds -> {
+                                                WriteBatch batch = db.batch();
+                                                for (DocumentSnapshot doc : qdds) {
+                                                    batch.delete(doc.getReference());
+                                                }
+                                                batch.commit().addOnSuccessListener(aVoid -> {
                                                     deleteTherapistImage(documentId);
                                                     therapistList.remove(position);
                                                     adapter.notifyItemRemoved(position);
                                                     adapter.notifyItemRangeChanged(position, therapistList.size());
-                                                })
-                                                .addOnFailureListener(exception -> {
-
+                                                    db.collection("therapist").document(documentId).delete();
                                                 });
-                                    }
+                                            }).addOnFailureListener(error -> {
+
+                                            });
+
                                 })
-                                .setNegativeButton("No", null)
+                                .setNegativeButton()
                                 .show();
 
                     });
                     binding.allTherapistsRecycler.setAdapter(adapter);
                 }
             }
-        }).addOnFailureListener(error->{
+        }).addOnFailureListener(error -> {
             checkAllTasksFinished();
         });
 
-        binding.addTherapistBtn.setOnClickListener(v -> {
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.navContainerView, new AddTherapistFragment())
-                    .addToBackStack(null)
-                    .commit();
-        });
+//        binding.addTherapistBtn.setOnClickListener(v -> {
+//            getParentFragmentManager().beginTransaction()
+//                    .replace(R.id.navContainerView, new AddTherapistFragment())
+//                    .addToBackStack(null)
+//                    .commit();
+//        });
     }
 
     private void checkAllTasksFinished() {
