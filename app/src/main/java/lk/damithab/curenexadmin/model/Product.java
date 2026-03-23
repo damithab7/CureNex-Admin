@@ -21,6 +21,7 @@ public class Product {
     private int stockCount;
     private boolean status;
     private float rating;
+    private long lastUpdate;
     private List<Attribute> attribute;
 
     @Data

@@ -25,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -76,7 +77,7 @@ public class EditTherapistFragment extends Fragment {
     private FirebaseStorage storage;
 
     private int completedTasks = 0;
-    private final int TOTAL_TASKS = 2;
+    private final int TOTAL_TASKS = 3;
 
     private SpinnerDialog spinnerDialog;
 
@@ -198,10 +199,12 @@ public class EditTherapistFragment extends Fragment {
 
                     });
 
+            ObjectKey signature = new ObjectKey(therapist.getLastUpdate());
 
             GlideApp.with(getContext())
                     .load(ref)
                     .centerCrop()
+                    .signature(signature)
                     .placeholder(R.drawable.imageplaceholder2)
                     .into(binding.editTherapistImage);
 
@@ -237,7 +240,7 @@ public class EditTherapistFragment extends Fragment {
 
                             }
                         });
-                        serviceSpinner.setSelection(adapter.getPosition(selectedGender));
+                        genderSpinner.setSelection(adapter.getPosition(selectedGender));
                     }
                 }
             });
@@ -320,6 +323,11 @@ public class EditTherapistFragment extends Fragment {
                 return;
             }
 
+            if (therapistSchedules.isEmpty()) {
+                new ToastDialog(getParentFragmentManager(), "Please add at least 1 schedule");
+                return;
+            }
+
             if (firstName.isEmpty()) {
                 binding.editTherapistFirstNameLayout.setErrorEnabled(true);
                 binding.editTherapistFirstNameLayout.setError("Firstname is required!");
@@ -383,6 +391,8 @@ public class EditTherapistFragment extends Fragment {
         String workMobileNo = binding.editTherapistWorkMobile.getText().toString();
         titleName = titleSpinner.getSelectedItem().toString();
 
+        long lastUpdate = System.currentTimeMillis();
+
         double finalRate = Double.parseDouble(rate);
 
         db.collection("therapist").document(therapistId).update("name",
@@ -392,7 +402,8 @@ public class EditTherapistFragment extends Fragment {
                         "bio", bio,
                         "rate", finalRate,
                         "workEmail", workEmail,
-                        "workMobileNo", workMobileNo)
+                        "workMobileNo", workMobileNo,
+                        "lastUpdate", lastUpdate)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
@@ -414,32 +425,33 @@ public class EditTherapistFragment extends Fragment {
 
     public void saveTherapistImage() {
 
-        StorageReference fileRef = storage.getReference("therapist-images")
-                .child(therapistId);
+        StorageReference fileRef = storage.getReference(therapist.getTherapistImage());
 
         if (selectedImage.toString().startsWith("content://") || selectedImage.toString().startsWith("file://")) {
-            fileRef.putFile(selectedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    checkAllTasksFinished(); /// 2
-                    requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    new ToastDialog(getParentFragmentManager(), "Therapist Added successfully!");
-
-                    if (isAdded()) {
-                        requireActivity().getSupportFragmentManager().popBackStack();
+            storage.getReference(therapist.getTherapistImage()).delete().addOnCompleteListener(task -> {
+                fileRef.putFile(selectedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        checkAllTasksFinished(); /// 2
+                        requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                     }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    checkAllTasksFinished(); /// 2
-                }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        checkAllTasksFinished(); /// 2
+
+                    }
+                });
+            }).addOnFailureListener(error -> {
+                checkAllTasksFinished(); /// 2
             });
+        } else {
+            checkAllTasksFinished(); /// 2
         }
 
-
     }
+
 
     private void saveTherapistSchedule() {
 
@@ -452,9 +464,8 @@ public class EditTherapistFragment extends Fragment {
 
         db.collection("therapist").document(therapistId).collection("schedule").get()
                 .addOnSuccessListener(qds -> {
-                    checkAllTasksFinished(); /// 3
+                    WriteBatch batch = db.batch();
                     if (!qds.isEmpty()) {
-                        WriteBatch batch = db.batch();
 
                         Set<String> dbIds = new HashSet<>();
 
@@ -478,15 +489,29 @@ public class EditTherapistFragment extends Fragment {
                         }
 
                         batch.commit().addOnSuccessListener(aVoid -> {
+                            checkAllTasksFinished(); /// 3
                             Log.d("Firestore", "All schedules added successfully!");
-                            if (isAdded()) {
-                                requireActivity().getSupportFragmentManager().popBackStack();
-                            }
                         }).addOnFailureListener(e -> {
+                            checkAllTasksFinished(); /// 3
                             Log.e("Firestore", "Error adding schedules", e);
                         });
+                    } else {
+                        for (TherapistSchedule sch : therapistSchedules) {
+                            DocumentReference newDoc = db.collection("therapist")
+                                    .document(therapistId)
+                                    .collection("schedule")
+                                    .document(sch.getScheduleId());
+                            batch.set(newDoc, sch);
+                            batch.commit().addOnSuccessListener(aVoid -> {
+                                checkAllTasksFinished(); /// 3
+                                Log.d("Firestore", "All schedules added successfully!");
+                            }).addOnFailureListener(e -> {
+                                checkAllTasksFinished(); /// 3
+                                Log.e("Firestore", "Error adding schedules", e);
+                            });
+                        }
                     }
-                }).addOnFailureListener(error->{
+                }).addOnFailureListener(error -> {
                     checkAllTasksFinished(); /// 3
                 });
 
@@ -518,6 +543,10 @@ public class EditTherapistFragment extends Fragment {
         completedTasks++;
         if (completedTasks >= TOTAL_TASKS) {
             spinnerDialog.dismiss();
+            new ToastDialog(getParentFragmentManager(), "Therapist Added successfully!");
+            if (isAdded()) {
+                requireActivity().getSupportFragmentManager().popBackStack();
+            }
             completedTasks = 0; // Reset for swipe-to-refresh
         }
     }

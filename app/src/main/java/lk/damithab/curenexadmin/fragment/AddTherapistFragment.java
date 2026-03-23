@@ -439,6 +439,12 @@ public class AddTherapistFragment extends Fragment {
         completedTasks++;
         if (completedTasks >= TOTAL_TASKS) {
             spinnerDialog.dismiss();
+            requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            new ToastDialog(getParentFragmentManager(), "Therapist Added successfully!");
+
+            if (isAdded()) {
+                requireActivity().getSupportFragmentManager().popBackStack();
+            }
             completedTasks = 0; // Reset for swipe-to-refresh
         }
     }
@@ -451,8 +457,8 @@ public class AddTherapistFragment extends Fragment {
                     .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot qds) {
-                            checkAllTasksFinished(); /// 1
                             if (!qds.isEmpty()) {
+                                checkAllTasksFinished(); /// 1
                                 User user = qds.toObjects(User.class).get(0);
                                 uid[0] = user.getUid();
                                 db.collection("therapist").whereEqualTo("userId", user.getUid())
@@ -462,7 +468,9 @@ public class AddTherapistFragment extends Fragment {
                                                 checkAllTasksFinished(); /// 2
                                                 if (!qds.isEmpty()) {
                                                     ///  this user id already has a therapist
+                                                    spinnerDialog.dismiss();
                                                     new ToastDialog(getParentFragmentManager(), "This therapist already exist!");
+                                                    requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                 } else {
                                                     /// save therapist
                                                     saveUserTherapist(user.getUid());
@@ -473,7 +481,7 @@ public class AddTherapistFragment extends Fragment {
                                         });
 
                             } else {
-                                checkAllTasksFinished(); /// 2
+                                checkAllTasksFinished(); /// 1
                                 /// save user & therapist
                                 saveTherapist();
                             }
@@ -481,7 +489,7 @@ public class AddTherapistFragment extends Fragment {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            checkAllTasksFinished();
+                            checkAllTasksFinished(); /// 1
                         }
                     });
         }
@@ -511,7 +519,7 @@ public class AddTherapistFragment extends Fragment {
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        checkAllTasksFinished(); /// 3
+                        checkAllTasksFinished(); /// 2
                         if (task.isSuccessful()) {
                             String uid = task.getResult().getUser().getUid();
 
@@ -527,7 +535,7 @@ public class AddTherapistFragment extends Fragment {
                                     .set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void unused) {
-
+                                            checkAllTasksFinished(); /// 3
                                             Therapist therapistItem = Therapist.builder().therapistId(therapistId).bio(bio)
                                                     .therapistImage(therapistImagePath).documentId(therapistId).name(therapistName)
                                                     .title(titleSpinner.getSelectedItem().toString()).genderId(genderId).serviceId(serviceId).rate(finalRate)
@@ -542,6 +550,7 @@ public class AddTherapistFragment extends Fragment {
 
                                                     }).addOnFailureListener(aVoid -> {
                                                         requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                                        spinnerDialog.dismiss();
                                                         checkAllTasksFinished();
                                                     });
 
@@ -549,7 +558,7 @@ public class AddTherapistFragment extends Fragment {
                                     }).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-
+                                            checkAllTasksFinished(); /// 3
                                         }
                                     });
                         } else {
@@ -564,8 +573,9 @@ public class AddTherapistFragment extends Fragment {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    checkAllTasksFinished(); /// 3
+                    checkAllTasksFinished(); /// 2
                     if (e instanceof FirebaseAuthUserCollisionException) {
+                        spinnerDialog.dismiss();
                         new ToastDialog(getParentFragmentManager(), "This email is already registered.");
                     }
                 });
@@ -583,6 +593,7 @@ public class AddTherapistFragment extends Fragment {
         String bio = binding.addTherapistBio.getText().toString();
         String workEmail = binding.addTherapistWorkEmail.getText().toString();
         String workMobileNo = binding.addTherapistWorkMobile.getText().toString();
+        long lastUpdate = System.currentTimeMillis();
 
         double finalRate = Double.parseDouble(rate);
 
@@ -591,7 +602,7 @@ public class AddTherapistFragment extends Fragment {
         Therapist therapistItem = Therapist.builder().therapistId(therapistId).bio(bio)
                 .therapistImage(therapistImagePath).documentId(therapistId).name(therapistName)
                 .title(titleSpinner.getSelectedItem().toString()).genderId(genderId).serviceId(serviceId).rate(finalRate)
-                .workEmail(workEmail).workMobileNo(workMobileNo).uid(userId).build();
+                .workEmail(workEmail).workMobileNo(workMobileNo).uid(userId).lastUpdate(lastUpdate).build();
 
         therapistRef.set(therapistItem)
                 .addOnSuccessListener(aVoid -> {
@@ -601,8 +612,8 @@ public class AddTherapistFragment extends Fragment {
                     saveTherapistSchedule();
 
                 }).addOnFailureListener(aVoid -> {
-
                     checkAllTasksFinished(); /// 3
+                    spinnerDialog.dismiss();
                     requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 });
     }
@@ -615,17 +626,10 @@ public class AddTherapistFragment extends Fragment {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 checkAllTasksFinished(); /// 4
-                requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                new ToastDialog(getParentFragmentManager(), "Therapist Added successfully!");
-
-                if (isAdded()) {
-                    requireActivity().getSupportFragmentManager().popBackStack();
-                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 checkAllTasksFinished(); /// 4
             }
         });

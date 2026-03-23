@@ -176,7 +176,9 @@ public class AddUserFragment extends Fragment {
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+
                         checkAllTasksFinished(); /// 3
+
                         if (task.isSuccessful()) {
                             String uid = task.getResult().getUser().getUid();
 

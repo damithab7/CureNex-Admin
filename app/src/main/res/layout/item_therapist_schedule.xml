@@ -38,11 +38,7 @@
                     android:maxLines="1"
                     android:text="Sunday"
                     android:textAlignment="textStart"
-                    android:textSize="@dimen/medium_font_size"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/home_c_card" />
+                    android:textSize="@dimen/medium_font_size" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/item_therapist_schedule_remove"
@@ -107,11 +103,7 @@
                     android:text="Max Appointments :"
                     android:textAlignment="textStart"
                     android:textSize="14dp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/home_c_card" />
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/item_therapist_schedule_maxappointments"
@@ -122,11 +114,7 @@
                     android:text="6"
                     android:textAlignment="textStart"
                     android:textSize="14dp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/home_c_card" />
+                    android:textStyle="bold" />
 
             </LinearLayout>
         </LinearLayout>

@@ -28,6 +28,10 @@ public class DashboardFragment extends Fragment {
 
     private FirebaseFirestore db;
 
+    private int completedTasks = 0;
+    private final int TOTAL_TASKS = 3;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,10 +49,61 @@ public class DashboardFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        binding.dashboardProductBtn.setOnClickListener(v -> {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.navContainerView, new ProductFragment())
+                    .addToBackStack(null)
+                    .commit();
+        });
+        binding.dashboardUserBtn.setOnClickListener(v -> {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.navContainerView, new UserFragment())
+                    .addToBackStack(null)
+                    .commit();
+        });
+        binding.dashboardTherapistBtn.setOnClickListener(v -> {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.navContainerView, new TherapistFragment())
+                    .addToBackStack(null)
+                    .commit();
+        });
+
+        startDataLoading(true);
+
+    }
+
+    private void checkAllTasksFinished() {
+        completedTasks++;
+        if (completedTasks >= TOTAL_TASKS) {
+            onDataLoad(false);
+            completedTasks = 0; // Reset for swipe-to-refresh
+        }
+    }
+
+    private void startDataLoading(boolean isShimmer) {
+        onDataLoad(isShimmer);
+        loadData();
+    }
+
+    private synchronized void onDataLoad(boolean isShimmer) {
+        if (isShimmer) {
+            binding.shimmerListingViewContainer.startShimmer();
+            binding.shimmerListingViewContainer.setVisibility(View.VISIBLE);
+            binding.dashboardMain.setVisibility(View.GONE);
+        } else {
+            binding.shimmerListingViewContainer.stopShimmer();
+            binding.shimmerListingViewContainer.setVisibility(View.GONE);
+            binding.dashboardMain.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void loadData(){
+
         db.collection("users").whereEqualTo("userStatus", Boolean.TRUE).count().get(AggregateSource.SERVER).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 long count = task.getResult().getCount();
                 binding.dashboardUserCount.setText(String.valueOf(count));
+                checkAllTasksFinished();
             }
         });
 
@@ -56,6 +111,7 @@ public class DashboardFragment extends Fragment {
             if (task.isSuccessful()) {
                 long count = task.getResult().getCount();
                 binding.dashboardTherapistCount.setText(String.valueOf(count));
+                checkAllTasksFinished();
             }
         });
 
@@ -63,6 +119,7 @@ public class DashboardFragment extends Fragment {
             if (task.isSuccessful()) {
                 long count = task.getResult().getCount();
                 binding.dashboardProductCount.setText(String.valueOf(count));
+                checkAllTasksFinished();
             }
         });
     }
