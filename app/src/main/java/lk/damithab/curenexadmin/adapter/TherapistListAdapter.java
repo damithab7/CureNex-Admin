@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -62,9 +63,12 @@ public class TherapistListAdapter extends RecyclerView.Adapter<TherapistListAdap
 
         StorageReference ref = storage.getReference(therapist.getTherapistImage());
 
+        ObjectKey signature = new ObjectKey(therapist.getLastUpdate());
+
         GlideApp.with(holder.itemView.getContext())
                 .load(ref)
                 .centerCrop()
+                .signature(signature)
                 .placeholder(R.drawable.imageplaceholder2)
                 .into(holder.therapistImage);
 

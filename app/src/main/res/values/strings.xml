@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CureNex Admin</string>
+    <string name="app_name">CN Admin</string>
     <string name="app_version">1.0.0</string>
     <string name="app_copy">"@dsb.inc"</string>
 

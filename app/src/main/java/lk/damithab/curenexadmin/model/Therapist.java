@@ -20,6 +20,7 @@ public class Therapist {
     @Getter(onMethod = @__({@Exclude}))
     @Setter(onMethod = @__({@Exclude}))
     private String serviceName;
+    private long lastUpdate;
 
     private String documentId;
     private String serviceId;

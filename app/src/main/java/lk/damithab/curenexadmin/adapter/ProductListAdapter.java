@@ -22,6 +22,7 @@ import java.util.List;
 import lk.damithab.curenexadmin.R;
 import lk.damithab.curenexadmin.model.Product;
 import lk.damithab.curenexadmin.module.GlideApp;
+import lk.damithab.curenexadmin.module.MyAppGlideModule;
 
 public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.ViewHolder> {
     private List<Product> products;
