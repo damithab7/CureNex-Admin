@@ -1,14 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".fragment.AccountFragment">
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_listing_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:shimmer_auto_start="true">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/item_account_skeleton" />
+
+        </LinearLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:visibility="visible"
+        android:id="@+id/account_main">
 
-</FrameLayout>
+         <androidx.cardview.widget.CardView
+            android:id="@+id/accountProfileCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_25"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            style="@style/Widget.Material3.CardView.Outlined"
+            app:cardBackgroundColor="@color/md_theme_surfaceContainer">
+            <LinearLayout
+                android:paddingHorizontal="25dp"
+                android:paddingVertical="15dp"
+                android:id="@+id/accountProfileLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    app:shapeAppearanceOverlay="@style/CircleImage"
+                    android:id="@+id/account_user_image"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/curenexlogo" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/account_user_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins"
+                        android:includeFontPadding="false"
+                        android:paddingLeft="@dimen/edit_text_padding"
+                        android:text="Damitha Sulochana"
+                        android:textSize="20sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:id="@+id/account_edit_profile_btn"
+                        android:includeFontPadding="false"
+                        android:padding="0dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/small_margin_vertical"
+                        android:fontFamily="@font/poppins"
+                        android:text="Edit Profile"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/small_font_size" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!--        <View-->
+        <!--            android:id="@+id/divider"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="4dp"-->
+        <!--            android:layout_marginTop="8dp"-->
+        <!--            android:background="@color/input_icon_color"-->
+        <!--            app:layout_constraintBottom_toTopOf="@+id/accountText"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/accountProfileLayout" />-->
+
+        <TextView
+            android:id="@+id/accountText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_25"
+            android:layout_marginTop="@dimen/default_margin_vertical"
+            android:fontFamily="@font/poppins"
+            android:text="Account"
+            android:textSize="@dimen/medium_font_size"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/accountProfileCard" />
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintTop_toBottomOf="@+id/accountText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/accountSettingsBtn"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:paddingStart="20dp"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_settings_rounded"
+                    android:drawableRight="@drawable/rightsmallarrow"
+                    android:fontFamily="@font/poppins"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minHeight="0dp"
+                    android:paddingVertical="@dimen/medium_padding"
+                    android:text="Settings"
+                    android:textAlignment="viewStart"
+                    android:textColor="?attr/textColorCustom"
+                    app:cornerRadius="0dp"
+                    app:iconPadding="@dimen/icon_padding" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/account_btn_sign_out"
+                    style="@style/Widget.Material3.Button.TextButton.Dialog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/layout_margin"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/poppins"
+                    android:includeFontPadding="false"
+                    android:text="Sign Out"
+                    android:textColor="@color/red"
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="@dimen/small_font_size"
+                    android:textStyle="bold"
+                    app:icon="@drawable/signouticon"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/red" />
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

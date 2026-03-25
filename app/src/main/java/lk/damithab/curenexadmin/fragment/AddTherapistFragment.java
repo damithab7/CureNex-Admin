@@ -233,14 +233,14 @@ public class AddTherapistFragment extends Fragment {
         });
 
         binding.addTherapistScheduleBtn.setOnClickListener(v -> {
-            AddScheduleBottomSheet sheet = new AddScheduleBottomSheet((schedule) -> {
-                therapistSchedules.add(schedule);
-                Log.d(TAG, "onViewCreated: Schedule Time" + schedule.getStartTime());
-                scheduleAdapter.setScheduleList(therapistSchedules);
-                binding.addTherapistScheduleRecycler.setAdapter(scheduleAdapter);
-            });
+                AddScheduleBottomSheet sheet = new AddScheduleBottomSheet((schedule) -> {
+                    therapistSchedules.add(schedule);
+                    Log.d(TAG, "onViewCreated: Schedule Time" + schedule.getStartTime());
+                    scheduleAdapter.setScheduleList(therapistSchedules);
+                    binding.addTherapistScheduleRecycler.setAdapter(scheduleAdapter);
+                });
 
-            sheet.show(getChildFragmentManager(), "ScheduleBottomSheet");
+                sheet.show(getChildFragmentManager(), "ScheduleBottomSheet");
 
         });
 
