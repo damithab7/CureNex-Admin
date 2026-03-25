@@ -71,7 +71,7 @@ public class ProductFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot qds) {
-                        checkAllTasksFinished();
+                        spinnerDialog.dismissAllowingStateLoss();
                         if (!qds.isEmpty()) {
                             List<Product> productList = qds.toObjects(Product.class);
                             /// On edit handled
@@ -106,7 +106,7 @@ public class ProductFragment extends Fragment {
                                                         adapter.notifyItemRangeChanged(position, productList.size());
                                                     })
                                                     .addOnFailureListener(exception -> {
-                                                        spinnerDialog.dismiss();
+                                                        spinnerDialog.dismissAllowingStateLoss();
                                                     });
                                         })
                                         .setNegativeButton()
@@ -117,7 +117,7 @@ public class ProductFragment extends Fragment {
                         }
                     }
                 }).addOnFailureListener(aVoid -> {
-                    checkAllTasksFinished();
+                    spinnerDialog.dismissAllowingStateLoss();
                 });
 
 //        binding.addProductBtn.setOnClickListener(v -> {
@@ -148,13 +148,9 @@ public class ProductFragment extends Fragment {
             new ToastDialog(getActivity().getSupportFragmentManager(), "Product removed successfully!");
 
             imageRef.delete().addOnSuccessListener(aVoid -> {
-                if (spinnerDialog.isAdded()) {
-                    spinnerDialog.dismiss();
-                }
+                checkAllTasksFinished();
             }).addOnFailureListener(exception -> {
-                if (spinnerDialog.isAdded()) {
-                    spinnerDialog.dismiss();
-                }
+                checkAllTasksFinished();
                 Log.e("StorageDelete", "Failed to delete: " + imagePath);
             });
         }

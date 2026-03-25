@@ -358,15 +358,10 @@ public class EditProductFragment extends Fragment {
                         "categoryId", categoryId,
                         "images", imagesArray
                 ).addOnSuccessListener(aVoid -> {
-                    requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    checkAllTasksFinished();
-                    new ToastDialog(getParentFragmentManager(), "Product updated successfully!");
-                    if (isAdded()) {
-                        requireActivity().getSupportFragmentManager().popBackStack();
-                    }
+                    checkAllTasksFinished(); ///3
                 }).addOnFailureListener(aVoid -> {
                     requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    checkAllTasksFinished();
+                    checkAllTasksFinished(); ///3
                 });
     }
 
@@ -374,6 +369,11 @@ public class EditProductFragment extends Fragment {
         completedTasks++;
         if (completedTasks >= TOTAL_TASKS) {
             spinnerDialog.dismiss();
+            requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            new ToastDialog(getParentFragmentManager(), "Product updated successfully!");
+            if (isAdded()) {
+                requireActivity().getSupportFragmentManager().popBackStack();
+            }
             completedTasks = 0; // Reset for swipe-to-refresh
         }
     }
@@ -388,10 +388,13 @@ public class EditProductFragment extends Fragment {
         }
         if (deleteTasks.isEmpty()) {
             saveProduct();
+            checkAllTasksFinished();///1
         } else {
             Tasks.whenAllComplete(deleteTasks).addOnCompleteListener(task -> {
-                checkAllTasksFinished();
+                checkAllTasksFinished();///1
                 saveProduct();
+            }).addOnFailureListener(error->{
+                checkAllTasksFinished(); ///1
             });
         }
     }
@@ -415,17 +418,17 @@ public class EditProductFragment extends Fragment {
         }
         if (uploadTasks.isEmpty()) {
             updateDataToFirebase();
+            checkAllTasksFinished(); ///2
         } else {
             Tasks.whenAll(uploadTasks)
                     .addOnSuccessListener(aVoid -> {
                         Log.d("Upload", "All " + selectedImages.size() + " images uploaded!");
-                        checkAllTasksFinished();
+                        checkAllTasksFinished(); ///2
                         updateDataToFirebase();
                     })
                     .addOnFailureListener(e -> {
                         Log.e("Upload", "At least one upload failed: " + e.getMessage());
-                        requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        checkAllTasksFinished();
+                        checkAllTasksFinished(); /// 2
                     });
         }
     }

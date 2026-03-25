@@ -93,8 +93,6 @@ public class EditTherapistFragment extends Fragment {
 
     private Boolean setStatus;
 
-    Set<String> localIds = new HashSet<>();
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -572,7 +570,7 @@ public class EditTherapistFragment extends Fragment {
         completedTasks++;
         if (completedTasks >= TOTAL_TASKS) {
             spinnerDialog.dismiss();
-            new ToastDialog(getParentFragmentManager(), "Therapist Added successfully!");
+            new ToastDialog(getParentFragmentManager(), "Therapist updated successfully!");
             if (isAdded()) {
                 requireActivity().getSupportFragmentManager().popBackStack();
             }
